@@ -1,11 +1,11 @@
 const express = require('express')
-const { getAllUsers, getUsersById, createUser, updataData, deleteData } = require('../service/user.service')
+const { getAllUser, getUserById, updataUser, createUser, deleteDataById } = require('../service/user.service')
 
 const router = express.Router()
 
 router.get('/', (req, res) => {
     try {
-        const data = getAllUsers()
+        const data = getAllUser()
         res.status(200).send(data)
     } catch (error) {
         res.status(404).send(error.message)
@@ -15,18 +15,8 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
     try {
         const { id } = req.params
-        const data = getUsersById(id)
+        const data = getUserById(id)
         res.status(200).send(data)
-    } catch (er) {
-        res.status(404).send(er.message)
-    }
-})
-
-router.post('/', (req, res) => {
-    try {
-        const { name, surname, email, pwd } = req.body
-        const data = createUser(name, surname, email, pwd)
-        res.status(201).send(data)
     } catch (error) {
         res.status(404).send(error.message)
     }
@@ -36,8 +26,17 @@ router.put('/:id', (req, res) => {
     try {
         const { id } = req.params
         const { name, surname, email, pwd } = req.body
-        const data = updataData(id, name, surname, email, pwd)
-        res.status(200).send(data)
+        const data = updataUser(id, name, surname, email, pwd)
+        res.status(201).send(data)
+    } catch (error) {
+        res.status(404).send(error.message)
+    }
+})
+
+router.post('/:id', (req, res) => {
+    try {
+        const { name, surname, email, pwd } = req.body
+        const data = createUser(name, surname, email, pwd)
     } catch (error) {
         res.status(404).send(error.message)
     }
@@ -46,12 +45,11 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     try {
         const { id } = req.params
-        const { name, surname, email, pwd } = req.body
-        const data = deleteData(id, name, surname, email, pwd)
-        res.status(200).send(data)
+        const data = deleteDataById(id)
+        res.status(201).send(data)
     } catch (error) {
-        res.status(404).send(error.message)
+        res.status(400).send(error.message)
     }
 })
 
-module.exports = { router }
+module.exports = router
