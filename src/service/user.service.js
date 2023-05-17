@@ -2,53 +2,68 @@ const fs = require('fs')
 
 const path = './storage/storage.json'
 
-function getAllUser() {
-    const data = JSON.parse(fs.readFileSync(path))
 
-    if (!data.length) throw new Error('empty')
+class Service {
+    getAllUser() {
+        const data = JSON.parse(fs.readFileSync(path))
 
-    return data
-}
+        if (!data.length) throw new Error('empty')
 
-function getUserById(id) {
-    const data = JSON.parse(fs.readFileSync(path))
-    const filtered = data.filter((el) => el.id == id)
-
-    if (!filtered.length) throw new Error('id not found')
-
-    return filtered
-}
-
-function createUser(name, surname, email, pwd) {
-    const data = JSON.parse(fs.readFileSync(path))
-    const obj = {
-        id : data.length + 1, name, surname, email, pwd
-    }
-    data.push(obj)
-}
-
-function updataUser(id, name, surname, email, pwd) {
-    const data = JSON.parse(fs.readFileSync(path))
-    const filtered = data.filter((el) => el.id != id)
-    const obj = {
-        id, name, surname, email, pwd
+        return data
     }
 
-    if (filtered.length == data.length) throw new Error('id not found')
-    filtered.push(obj)
+    getUserById(id) {
+        const data = JSON.parse(fs.readFileSync(path))
+        const filtered = data.filter((el) => el.id == id)
 
-    fs.writeFileSync(path, JSON.stringify(filtered))
-    return data
+        if (!filtered.length) throw new Error('id not found')
+
+        return filtered
+    }
+
+    createUser(name, surname, email, pwd) {
+        const data = JSON.parse(fs.readFileSync(path))
+        const obj = {
+            id: data.length + 1, name, surname, email, pwd
+        }
+        data.push(obj)
+    }
+
+    updataUser(id, name, surname, email, pwd) {
+        const data = JSON.parse(fs.readFileSync(path))
+        const filtered = data.filter((el) => el.id != id)
+        const obj = {
+            id, name, surname, email, pwd
+        }
+
+        if (filtered.length == data.length) throw new Error('id not found')
+        filtered.push(obj)
+
+        fs.writeFileSync(path, JSON.stringify(filtered))
+        return data
+    }
+
+    patchUser(id, clientObj) {
+        const data = JSON.parse(fs.readFileSync(path))
+        const oldData = data.find((el) => el.id == id)
+        const newData = { ...oldData, ...clientObj }
+        const patched = data.filter((el) => el.id != id)
+        if (patched.length == data.length) throw new Error('id not found')
+        patched.push(newData)
+        fs.writeFileSync(path, JSON.stringify(patched))
+        return patched
+    }
+
+
+    deleteDataById(id) {
+        const data = JSON.parse(fs.readFileSync(path))
+        const filtered = data.filter((el) => el.id != id)
+
+        if (filtered.length == data.length) throw new Error('id not found')
+
+        fs.writeFileSync(path, JSON.stringify(filtered))
+        return filtered
+    }
 }
 
-function deleteDataById(id) {
-    const data = JSON.parse(fs.readFileSync(path))
-    const filtered = data.filter((el) => el.id != id)
-
-    if (filtered.length == data.length) throw new Error('id not found')
-
-    fs.writeFileSync(path, JSON.stringify(filtered))
-    return filtered
-}
-
-module.exports = { getAllUser, getUserById, updataUser, createUser, deleteDataById }
+module.exports = { Service }
