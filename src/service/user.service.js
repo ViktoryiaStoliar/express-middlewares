@@ -26,6 +26,9 @@ class Service {
         const obj = {
             id: data.length + 1, name, surname, email, pwd
         }
+
+        // if (filtered.length > 0) throw new Error('this label is exist')
+
         data.push(obj)
     }
 
